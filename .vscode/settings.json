@@ -1,6 +1,7 @@
 {
-    "Codegeex.CompletionDelay": 1,
+    "Codegeex.CompletionDelay": 2,
     "Codegeex.CompletionModel": "CodeGeeX Pro[Beta]",
     "Codegeex.GenerationPreference": "block",
-    "Codegeex.OnlyKeyControl": true
+    "Codegeex.OnlyKeyControl": true,
+    "Codegeex.CandidateNum": "1 (快)"
 }
