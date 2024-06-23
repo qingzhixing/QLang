@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"QLang/token"
+	"fmt"
 	"testing"
 )
 
@@ -13,7 +14,8 @@ func TestNextToken(t *testing.T) {
 			x + y;
 		};
 		let result = add(five, ten);
-	`
+`
+	fmt.Printf("input string:\n{%q}\n", input)
 	testDataList := []struct {
 		expectedType    token.TokenType
 		expectedLiteral string
@@ -61,6 +63,8 @@ func TestNextToken(t *testing.T) {
 
 	for index, testData := range testDataList {
 		token := lexer.NextToken()
+
+		fmt.Printf("testData [ %d ] - tokenType = %q, literal = %q\n", index, token.Type, token.Literal)
 
 		if token.Type != testData.expectedType {
 			t.Fatalf("testData [ %d ] - tokenType wrong.Expected = %q, got = %q",
