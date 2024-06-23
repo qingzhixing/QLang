@@ -14,6 +14,14 @@ type Lexer struct {
 	character    byte
 }
 
+func (lexer *Lexer) toString() string {
+	return fmt.Sprintf(
+		"position:%d, readPosition:%d, character:%q",
+		lexer.position,
+		lexer.readPosition,
+		lexer.character)
+}
+
 func New(input string) *Lexer {
 	lexer := &Lexer{input: input}
 	lexer.readChar()
@@ -28,12 +36,27 @@ func (lexer *Lexer) readChar() {
 	}
 	lexer.position = lexer.readPosition
 	lexer.readPosition++
+	fmt.Printf("after readChar(): %s\n", lexer.toString())
 }
+
+// func (lexer *Lexer) backspace() {
+// 	if lexer.position == 0 {
+// 		return
+// 	}
+// 	lexer.position--
+// 	lexer.readPosition = lexer.position + 1
+// 	lexer.character = lexer.input[lexer.position]
+// 	fmt.Printf("Backspace(): %s\n", lexer.toString())
+// }
 
 var whiteSpaceList = " \t\n\r"
 
+func isWhiteSpace(character byte) bool {
+	return strings.Contains(whiteSpaceList, string(character))
+}
+
 func (lexer *Lexer) skipWhiteSpace() {
-	for strings.Contains(whiteSpaceList, string(lexer.character)) {
+	for isWhiteSpace(lexer.character) {
 		fmt.Printf("Skipping (val = %d) => [%q]\n", lexer.character, string(lexer.character))
 		lexer.readChar()
 	}
@@ -44,7 +67,7 @@ func (lexer *Lexer) NextToken() token.Token {
 
 	lexer.skipWhiteSpace()
 
-	fmt.Printf("Judging character:%q\n", string(lexer.character))
+	fmt.Printf("Judging character:%q\n", lexer.character)
 
 	switch lexer.character {
 	case '=':
@@ -72,9 +95,9 @@ func (lexer *Lexer) NextToken() token.Token {
 			token_var.Type = token.LookupIdent(token_var.Literal)
 			return token_var
 		} else if isDigit(lexer.character) {
-			// TODO:数字后面的第一个字符会被误跳过
 			token_var.Type = token.INT
 			token_var.Literal = lexer.readNumber()
+			return token_var
 		} else {
 			token_var = newToken(token.ILLEGAL, lexer.character)
 		}
@@ -93,7 +116,7 @@ func (lexer *Lexer) readIdentifier() string {
 	for isLetter(lexer.character) {
 		lexer.readChar()
 	}
-	fmt.Printf("character [%q] is not a letter\n", string(lexer.character))
+	fmt.Printf("character [%q] is not a letter\n", lexer.character)
 	return lexer.input[startPos:lexer.position]
 }
 
