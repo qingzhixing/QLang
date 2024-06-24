@@ -1,4 +1,4 @@
-# WAIIG_Code
+# QLang
 
 Writing An INTERPRETER In GO
 

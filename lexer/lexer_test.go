@@ -6,8 +6,32 @@ import (
 	"testing"
 )
 
+type DataList struct {
+	expectedType    token.TokenType
+	expectedLiteral string
+}
+
 func TestNextToken(t *testing.T) {
-	input := `
+	testInput := func(input string, dataList []DataList) {
+		lexer := New(input)
+
+		for index, testData := range dataList {
+			token := lexer.NextToken()
+
+			fmt.Printf("testData [ %d ] - tokenType = %q, literal = %q\n", index, token.Type, token.Literal)
+
+			if token.Type != testData.expectedType {
+				t.Fatalf("testData [ %d ] - tokenType wrong.Expected = %q, got = %q",
+					index, testData.expectedType, token.Type)
+			}
+
+			if token.Literal != testData.expectedLiteral {
+				t.Fatalf("testData [ %d ] - literal wrong.Expected = %q, got = %q",
+					index, testData.expectedLiteral, token.Literal)
+			}
+		}
+	}
+	input_1 := `
 		let five = 5;
 		let ten = 10;
 		let add = func(x, y){
@@ -15,11 +39,7 @@ func TestNextToken(t *testing.T) {
 		};
 		let result = add(five, ten);
 `
-	fmt.Printf("input string:\n{%q}\n", input)
-	testDataList := []struct {
-		expectedType    token.TokenType
-		expectedLiteral string
-	}{
+	dataList_1 := []DataList{
 		{token.LET, "let"},
 		{token.IDENT, "five"},
 		{token.ASSIGN, "="},
@@ -58,22 +78,55 @@ func TestNextToken(t *testing.T) {
 		{token.SEMICOLON, ";"},
 		{token.EOF, ""},
 	}
+	testInput(input_1, dataList_1)
 
-	lexer := New(input)
-
-	for index, testData := range testDataList {
-		token := lexer.NextToken()
-
-		fmt.Printf("testData [ %d ] - tokenType = %q, literal = %q\n", index, token.Type, token.Literal)
-
-		if token.Type != testData.expectedType {
-			t.Fatalf("testData [ %d ] - tokenType wrong.Expected = %q, got = %q",
-				index, testData.expectedType, token.Type)
-		}
-
-		if token.Literal != testData.expectedLiteral {
-			t.Fatalf("testData [ %d ] - literal wrong.Expected = %q, got = %q",
-				index, testData.expectedLiteral, token.Literal)
-		}
+	input_2 := `
+	!-/*5;
+	5 < 10 > 5;
+	`
+	dataList_2 := []DataList{
+		{token.BANG, "!"},
+		{token.MINUS, "-"},
+		{token.SLASH, "/"},
+		{token.ASTERISK, "*"},
+		{token.INT, "5"},
+		{token.SEMICOLON, ";"},
+		{token.INT, "5"},
+		{token.LT, "<"},
+		{token.INT, "10"},
+		{token.GT, ">"},
+		{token.INT, "5"},
+		{token.SEMICOLON, ";"},
 	}
+
+	testInput(input_2, dataList_2)
+
+	input_3 := `
+		if(5 < 10){
+			return true;
+		}else{
+			return false;
+		}
+	`
+
+	dataList_3 := []DataList{
+		{token.IF, "if"},
+		{token.LPAREN, "("},
+		{token.INT, "5"},
+		{token.LT, "<"},
+		{token.INT, "10"},
+		{token.RPAREN, ")"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.TRUE, "true"},
+		{token.SEMICOLON, ";"},
+		{token.RBRACE, "}"},
+		{token.ELSE, "else"},
+		{token.LBRACE, "{"},
+		{token.RETURN, "return"},
+		{token.FALSE, "false"},
+		{token.SEMICOLON, ";"},
+	}
+
+	testInput(input_3, dataList_3)
 }

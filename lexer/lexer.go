@@ -36,18 +36,8 @@ func (lexer *Lexer) readChar() {
 	}
 	lexer.position = lexer.readPosition
 	lexer.readPosition++
-	fmt.Printf("after readChar(): %s\n", lexer.toString())
+	// fmt.Printf("after readChar(): %s\n", lexer.toString())
 }
-
-// func (lexer *Lexer) backspace() {
-// 	if lexer.position == 0 {
-// 		return
-// 	}
-// 	lexer.position--
-// 	lexer.readPosition = lexer.position + 1
-// 	lexer.character = lexer.input[lexer.position]
-// 	fmt.Printf("Backspace(): %s\n", lexer.toString())
-// }
 
 var whiteSpaceList = " \t\n\r"
 
@@ -57,7 +47,7 @@ func isWhiteSpace(character byte) bool {
 
 func (lexer *Lexer) skipWhiteSpace() {
 	for isWhiteSpace(lexer.character) {
-		fmt.Printf("Skipping (val = %d) => [%q]\n", lexer.character, string(lexer.character))
+		// fmt.Printf("Skipping (val = %d) => [%q]\n", lexer.character, string(lexer.character))
 		lexer.readChar()
 	}
 }
@@ -67,7 +57,7 @@ func (lexer *Lexer) NextToken() token.Token {
 
 	lexer.skipWhiteSpace()
 
-	fmt.Printf("Judging character:%q\n", lexer.character)
+	// fmt.Printf("Judging character:%q\n", lexer.character)
 
 	switch lexer.character {
 	case '=':
@@ -86,6 +76,18 @@ func (lexer *Lexer) NextToken() token.Token {
 		token_var = newToken(token.LBRACE, lexer.character)
 	case '}':
 		token_var = newToken(token.RBRACE, lexer.character)
+	case '!':
+		token_var = newToken(token.BANG, lexer.character)
+	case '-':
+		token_var = newToken(token.MINUS, lexer.character)
+	case '/':
+		token_var = newToken(token.SLASH, lexer.character)
+	case '*':
+		token_var = newToken(token.ASTERISK, lexer.character)
+	case '<':
+		token_var = newToken(token.LT, lexer.character)
+	case '>':
+		token_var = newToken(token.GT, lexer.character)
 	case 0:
 		token_var.Literal = ""
 		token_var.Type = token.EOF
@@ -116,7 +118,7 @@ func (lexer *Lexer) readIdentifier() string {
 	for isLetter(lexer.character) {
 		lexer.readChar()
 	}
-	fmt.Printf("character [%q] is not a letter\n", lexer.character)
+	// fmt.Printf("character [%q] is not a letter\n", lexer.character)
 	return lexer.input[startPos:lexer.position]
 }
 
@@ -129,7 +131,7 @@ func (lexer *Lexer) readNumber() string {
 	for isDigit(lexer.character) {
 		lexer.readChar()
 	}
-	fmt.Printf("character [%q] is not a digit\n", string(lexer.character))
+	// fmt.Printf("character [%q] is not a digit\n", string(lexer.character))
 	return lexer.input[startPos:lexer.position]
 }
 

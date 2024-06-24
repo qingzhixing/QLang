@@ -18,6 +18,9 @@ const (
 	ASTERISK TokenType = "*"
 	SLASH    TokenType = "/"
 
+	LT TokenType = "<"
+	GT TokenType = ">"
+
 	// 分隔符
 	COMMA     TokenType = ","
 	SEMICOLON TokenType = ";"
@@ -30,6 +33,11 @@ const (
 	// 关键字
 	FUNCTION TokenType = "FUNCTION"
 	LET      TokenType = "LET"
+	IF       TokenType = "IF"
+	ELSE     TokenType = "ELSE"
+	RETURN   TokenType = "RETURN"
+	TRUE     TokenType = "TRUE"
+	FALSE    TokenType = "FALSE"
 )
 
 type Token struct {
@@ -38,8 +46,13 @@ type Token struct {
 }
 
 var keywordMap = map[string]TokenType{
-	"func": FUNCTION,
-	"let":  LET,
+	"func":   FUNCTION,
+	"let":    LET,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
+	"true":   TRUE,
+	"false":  FALSE,
 }
 
 func LookupIdent(ident string) TokenType {
