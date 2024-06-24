@@ -27,15 +27,22 @@ func New(input string) *Lexer {
 	lexer.readChar()
 	return lexer
 }
-
-func (lexer *Lexer) readChar() {
-	if lexer.readPosition >= len(lexer.input) {
-		lexer.character = 0
-	} else {
-		lexer.character = lexer.input[lexer.readPosition]
-	}
+func (lexer *Lexer) positionRightMove() {
 	lexer.position = lexer.readPosition
 	lexer.readPosition++
+}
+
+func (lexer *Lexer) peekChar() byte {
+	if lexer.readPosition >= len(lexer.input) {
+		return 0
+	} else {
+		return lexer.input[lexer.readPosition]
+	}
+}
+
+func (lexer *Lexer) readChar() {
+	lexer.character = lexer.peekChar()
+	lexer.positionRightMove()
 	// fmt.Printf("after readChar(): %s\n", lexer.toString())
 }
 
@@ -61,6 +68,13 @@ func (lexer *Lexer) NextToken() token.Token {
 
 	switch lexer.character {
 	case '=':
+		if lexer.peekChar() == '=' {
+			old_char := lexer.character
+			lexer.readChar()
+			literal := string(old_char) + string(lexer.character)
+			token_var = token.Token{Type: token.EQ, Literal: literal}
+			break
+		}
 		token_var = newToken(token.ASSIGN, lexer.character)
 	case ';':
 		token_var = newToken(token.SEMICOLON, lexer.character)
@@ -77,6 +91,13 @@ func (lexer *Lexer) NextToken() token.Token {
 	case '}':
 		token_var = newToken(token.RBRACE, lexer.character)
 	case '!':
+		if lexer.peekChar() == '=' {
+			old_char := lexer.character
+			lexer.readChar()
+			literal := string(old_char) + string(lexer.character)
+			token_var = token.Token{Type: token.NOT_EQ, Literal: literal}
+			break
+		}
 		token_var = newToken(token.BANG, lexer.character)
 	case '-':
 		token_var = newToken(token.MINUS, lexer.character)
@@ -109,6 +130,7 @@ func (lexer *Lexer) NextToken() token.Token {
 	return token_var
 }
 
+// 仅支持单字符，多字符请使用token.Token{}
 func newToken(tokenType token.TokenType, character byte) token.Token {
 	return token.Token{Type: tokenType, Literal: string(character)}
 }

@@ -129,4 +129,18 @@ func TestNextToken(t *testing.T) {
 	}
 
 	testInput(input_3, dataList_3)
+
+	input_4 := `
+	10 == 10
+	10 != 9
+	`
+	dataList_4 := []DataList{
+		{token.INT, "10"},
+		{token.EQ, "=="},
+		{token.INT, "10"},
+		{token.INT, "10"},
+		{token.NOT_EQ, "!="},
+		{token.INT, "9"},
+	}
+	testInput(input_4, dataList_4)
 }
